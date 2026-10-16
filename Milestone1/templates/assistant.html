@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}AI Assistant — EventOps AI{% endblock %}
+
+{% block extra_css %}
+<style>
+    .chat-container {
+        height: 520px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.5rem;
+        background: #fdfdfd;
+        border-radius: 1rem;
+    }
+    .chat-bubble {
+        max-width: 80%;
+        padding: 0.85rem 1.25rem;
+        border-radius: 1.25rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    .chat-bubble.user {
+        background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 0.3rem;
+    }
+    .chat-bubble.bot {
+        background: #eef2f7;
+        color: #212529;
+        align-self: flex-start;
+        border-bottom-left-radius: 0.3rem;
+    }
+    .suggestion-chip {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        padding: 0.35rem 0.85rem;
+    }
+    .suggestion-chip:hover {
+        background-color: #0d6efd !important;
+        color: white !important;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-white d-flex align-items-center justify-content-between py-3">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 44px; height: 44px; font-size: 1.3rem;">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold">EventOps Assistant</h5>
+                            <small class="text-success"><i class="bi bi-circle-fill" style="font-size: 0.5rem;"></i> Active & Ready</small>
+                        </div>
+                    </div>
+                    <span class="badge bg-light text-dark border">Autonomous Agent</span>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="chat-container border-bottom" id="chatMessages">
+                        <div class="chat-bubble bot shadow-sm">
+                            👋 Hello {{ current_user.name }}! I am your <strong>EventOps AI Assistant</strong>.
+                            <br><br>
+                            How can I help you today? You can ask me to:
+                            <br>• Show your current registrations
+                            <br>• List all upcoming events
+                            <br>• Inspect available venues & capacity
+                            <br>• Check scheduled speakers and sessions
+                        </div>
+                    </div>
+
+                    <!-- Quick Suggestions -->
+                    <div class="p-3 bg-light border-bottom d-flex flex-wrap gap-2 align-items-center">
+                        <small class="text-muted fw-bold me-1"><i class="bi bi-lightning-charge"></i> Quick:</small>
+                        <span class="badge bg-white text-primary border suggestion-chip" onclick="askQuestion('What are my registrations?')">My Registrations</span>
+                        <span class="badge bg-white text-primary border suggestion-chip" onclick="askQuestion('Show upcoming events')">Upcoming Events</span>
+                        <span class="badge bg-white text-primary border suggestion-chip" onclick="askQuestion('List venues')">Venues</span>
+                        <span class="badge bg-white text-primary border suggestion-chip" onclick="askQuestion('Who is speaking?')">Speakers</span>
+                    </div>
+
+                    <!-- Input Box -->
+                    <div class="p-3">
+                        <form id="chatForm" class="d-flex gap-2">
+                            <input type="text" id="userInput" class="form-control form-control-lg" placeholder="Ask anything about events, venues, or registrations..." autocomplete="off" required>
+                            <button type="submit" class="btn btn-primary px-4" id="sendBtn">
+                                <i class="bi bi-send-fill"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const chatContainer = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    function appendMessage(text, sender) {
+        const bubble = document.createElement('div');
+        bubble.className = `chat-bubble ${sender} shadow-sm`;
+        bubble.innerText = text;
+        chatContainer.appendChild(bubble);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function askQuestion(q) {
+        userInput.value = q;
+        chatForm.dispatchEvent(new Event('submit'));
+    }
+
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        appendMessage(message, 'user');
+        userInput.value = '';
+        userInput.disabled = true;
+        sendBtn.disabled = true;
+
+        // Typing placeholder
+        const typingBubble = document.createElement('div');
+        typingBubble.className = 'chat-bubble bot text-muted fst-italic';
+        typingBubble.id = 'typingIndicator';
+        typingBubble.innerText = 'Thinking...';
+        chatContainer.appendChild(typingBubble);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        try {
+            const res = await fetch("{{ url_for('assistant_api') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: message })
+            });
+            const data = await res.json();
+            document.getElementById('typingIndicator')?.remove();
+
+            if (res.ok && data.reply) {
+                appendMessage(data.reply, 'bot');
+            } else {
+                appendMessage(data.error || 'Sorry, I encountered an issue processing your request.', 'bot');
+            }
+        } catch (err) {
+            document.getElementById('typingIndicator')?.remove();
+            appendMessage('Network error occurred. Please try again.', 'bot');
+        } finally {
+            userInput.disabled = false;
+            sendBtn.disabled = false;
+            userInput.focus();
+        }
+    });
+</script>
+{% endblock %}

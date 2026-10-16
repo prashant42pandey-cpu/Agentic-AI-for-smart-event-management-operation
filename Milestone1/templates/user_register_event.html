@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Register for an Event — EventOps AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h4 class="fw-bold mb-0"><i class="bi bi-person-plus text-primary me-2"></i>Register for Event</h4>
+                </div>
+                <div class="card-body p-4">
+                    {% if events %}
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Event</label>
+                            <select name="event_id" class="form-select form-select-lg" required>
+                                <option value="" disabled selected>-- Choose an Event --</option>
+                                {% for event in events %}
+                                    <option value="{{ event.id }}">
+                                        {{ event.title }} ({{ event.date }} at {{ event.time }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Select Ticket Type</label>
+                            <select name="ticket_type" class="form-select" required>
+                                <option value="Standard" selected>Standard</option>
+                                <option value="VIP">VIP</option>
+                                <option value="Speaker">Speaker</option>
+                                <option value="Press">Press</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Complete Registration
+                            </button>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-calendar-x fs-1 text-muted mb-3 d-block"></i>
+                            <p class="text-muted">No open events available for registration at this time.</p>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Return to Dashboard</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

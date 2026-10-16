@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Registrations — Admin — EventOps AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-people text-primary"></i> Attendee Registrations</h2>
+            <p class="text-muted mb-0">Track attendee check-ins, ticket tiers, and attendance</p>
+        </div>
+        <div>
+            <span class="badge bg-primary fs-6">{{ registrations|length }} Total Registrations</span>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            {% if registrations %}
+            <div class="table-responsive">
+                <table class="table table-hover table-custom mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Attendee</th>
+                            <th>Email</th>
+                            <th>Event</th>
+                            <th>Ticket Type</th>
+                            <th>Check-in Status</th>
+                            <th class="text-end pe-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reg in registrations %}
+                        <tr>
+                            <td class="ps-4 fw-bold">
+                                {{ reg.user.name if reg.user else 'User #' ~ reg.user_id }}
+                            </td>
+                            <td>{{ reg.user.email if reg.user else '—' }}</td>
+                            <td>{{ reg.event.title if reg.event else 'Event #' ~ reg.event_id }}</td>
+                            <td>
+                                <span class="badge bg-info-subtle text-info border border-info-subtle">
+                                    {{ reg.ticket_type }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if reg.checked_in %}
+                                    <span class="badge bg-success"><i class="bi bi-check-circle"></i> Checked In</span>
+                                {% else %}
+                                    <span class="badge bg-secondary"><i class="bi bi-circle"></i> Pending</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4">
+                                <a href="{{ url_for('admin_checkin', reg_id=reg.id) }}" class="btn btn-sm btn-outline-{{ 'warning' if reg.checked_in else 'success' }}">
+                                    <i class="bi bi-{{ 'arrow-counterclockwise' if reg.checked_in else 'check2' }}"></i>
+                                    {{ 'Undo Check-in' if reg.checked_in else 'Check In' }}
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-people display-4 text-muted mb-3 d-block"></i>
+                <p class="text-muted">No registrations found in the system.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Event Feedback — {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h4 class="fw-bold mb-0"><i class="bi bi-star-half text-warning me-2"></i>Event Feedback</h4>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-1">{{ event.title }}</h5>
+                    <p class="text-muted small mb-4"><i class="bi bi-calendar-event me-1"></i>{{ event.date }} at {{ event.time }} · {{ event.location }}</p>
+
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Your Rating (1 to 5 Stars)</label>
+                            <select name="rating" class="form-select form-select-lg" required>
+                                <option value="" disabled {% if not existing %}selected{% endif %}>-- Select Rating --</option>
+                                <option value="5" {% if existing and existing.rating == 5 %}selected{% endif %}>⭐⭐⭐⭐⭐ (5 - Outstanding)</option>
+                                <option value="4" {% if existing and existing.rating == 4 %}selected{% endif %}>⭐⭐⭐⭐ (4 - Very Good)</option>
+                                <option value="3" {% if existing and existing.rating == 3 %}selected{% endif %}>⭐⭐⭐ (3 - Average)</option>
+                                <option value="2" {% if existing and existing.rating == 2 %}selected{% endif %}>⭐⭐ (2 - Below Average)</option>
+                                <option value="1" {% if existing and existing.rating == 1 %}selected{% endif %}>⭐ (1 - Poor)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Comments & Suggestions</label>
+                            <textarea name="comment" rows="4" class="form-control" placeholder="Share your experience, highlights, or areas for improvement...">{{ existing.comment if existing else '' }}</textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg text-dark fw-bold">
+                                <i class="bi bi-send-fill"></i> {{ 'Update Feedback' if existing else 'Submit Feedback' }}
+                            </button>
+                            <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

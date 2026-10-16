@@ -1,0 +1,398 @@
+{% extends "base.html" %}
+
+{% block title %}About Us — EventOps AI{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-about {
+        background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 50%, #a855f7 100%);
+        border-radius: 2rem;
+        padding: 3rem 2rem;
+        color: white;
+        box-shadow: 0 20px 40px rgba(111, 66, 193, 0.3);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2.5rem;
+    }
+    .hero-about::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+    }
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .hero-about .display-4 {
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+    }
+    .hero-about p {
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+    }
+    .hero-about .hero-illustration {
+        position: relative;
+        z-index: 1;
+        max-height: 200px;
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+    }
+
+    /* Stats */
+    .stats-section-about {
+        background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+        border-radius: 2rem;
+        padding: 2.5rem 1rem;
+        margin-bottom: 2.5rem;
+    }
+    .stats-section-about .stat-item {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #6f42c1;
+    }
+    .stats-section-about .stat-label {
+        font-size: 1rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    /* Value Cards */
+    .value-card {
+        border: none;
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        background: white;
+        padding: 1.5rem;
+        text-align: center;
+    }
+    .value-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 40px rgba(0,0,0,0.10);
+    }
+    .value-card .icon-circle {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+        margin: 0 auto 1rem;
+    }
+    .icon-violet { background: linear-gradient(135deg, #6f42c1, #8b5cf6); }
+    .icon-blue { background: linear-gradient(135deg, #0d6efd, #3b82f6); }
+    .icon-green { background: linear-gradient(135deg, #198754, #22c55e); }
+    .icon-orange { background: linear-gradient(135deg, #f59e0b, #f97316); }
+
+    /* Team */
+    .team-card {
+        border: none;
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        transition: transform 0.3s ease;
+        text-align: center;
+        padding: 1.5rem 1rem;
+        background: white;
+    }
+    .team-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    }
+    .team-card img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #e9ecef;
+        transition: border-color 0.3s ease;
+    }
+    .team-card:hover img {
+        border-color: #6f42c1;
+    }
+    .team-card .team-name {
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-top: 1rem;
+    }
+    .team-card .team-role {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    .team-card .social-links a {
+        color: #6c757d;
+        transition: color 0.2s;
+        font-size: 1.2rem;
+        margin: 0 0.3rem;
+    }
+    .team-card .social-links a:hover {
+        color: #6f42c1;
+    }
+
+    /* Timeline */
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+        border-left: 3px solid #6f42c1;
+    }
+    .timeline-item {
+        margin-bottom: 2rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -2.15rem;
+        top: 0.3rem;
+        width: 1.2rem;
+        height: 1.2rem;
+        background: #6f42c1;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #6f42c1;
+    }
+    .timeline-item .year {
+        font-weight: 700;
+        color: #6f42c1;
+        font-size: 1.1rem;
+    }
+    .timeline-item .title {
+        font-weight: 600;
+    }
+    .timeline-item .desc {
+        color: #6c757d;
+        font-size: 0.95rem;
+    }
+
+    /* Illustrations */
+    .illustration-wrapper {
+        background: rgba(111, 66, 193, 0.05);
+        border-radius: 2rem;
+        padding: 1.5rem;
+        text-align: center;
+    }
+    .illustration-wrapper img {
+        max-width: 100%;
+        max-height: 200px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ===== HERO ===== -->
+<div class="hero-about">
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <h1 class="display-4"><i class="bi bi-robot me-3"></i>About EventOps AI</h1>
+            <p class="lead fs-4">
+                We are on a mission to transform event management through intelligent automation.
+            </p>
+            <p class="fs-6">
+                EventOps AI is an agentic AI-powered platform where specialised AI agents collaborate
+                to automate event planning, attendee management, venue operations, speaker coordination,
+                sponsorship tracking, and incident handling — all in real time.
+            </p>
+        </div>
+        <div class="col-lg-5 text-center mt-4 mt-lg-0">
+            <img src="{{ url_for('static', filename='img/team-illustration.svg') }}"
+                 alt="Team illustration"
+                 class="hero-illustration img-fluid"
+                 onerror="this.style.display='none'">
+            <div class="mt-2">
+                <span class="badge bg-light text-dark px-3 py-2">🤖 AI Agents</span>
+                <span class="badge bg-light text-dark px-3 py-2">⚡ Real‑time</span>
+                <span class="badge bg-light text-dark px-3 py-2">📊 Intelligence</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== STATS ===== -->
+<div class="stats-section-about row text-center g-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-item" data-count="150">0</div>
+        <div class="stat-label">Events Managed</div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-item" data-count="12450">0</div>
+        <div class="stat-label">Attendees</div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-item" data-count="98">0</div>
+        <div class="stat-label">Speakers</div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-item" data-count="64">0</div>
+        <div class="stat-label">Sponsors</div>
+    </div>
+</div>
+
+<!-- ===== OUR VALUES ===== -->
+<h2 class="text-center mb-4"><i class="bi bi-heart-fill text-violet"></i> Our Values</h2>
+<div class="row g-4 mb-5">
+    <div class="col-md-3 col-sm-6">
+        <div class="value-card">
+            <div class="icon-circle icon-violet"><i class="bi bi-robot"></i></div>
+            <h5>AI-Powered</h5>
+            <p class="text-muted small">Six specialised agents work autonomously to handle every aspect of event operations.</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="value-card">
+            <div class="icon-circle icon-blue"><i class="bi bi-graph-up"></i></div>
+            <h5>Real‑time Intelligence</h5>
+            <p class="text-muted small">Event health scores, bottleneck predictions, and optimisation recommendations in real time.</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="value-card">
+            <div class="icon-circle icon-green"><i class="bi bi-people"></i></div>
+            <h5>Attendee Centric</h5>
+            <p class="text-muted small">Seamless experiences with automated registration, check‑in, and personalised notifications.</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="value-card">
+            <div class="icon-circle icon-orange"><i class="bi bi-shield-check"></i></div>
+            <h5>Enterprise Ready</h5>
+            <p class="text-muted small">Scalable, secure, with executive dashboards and multi‑event management.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TEAM ===== -->
+<h2 class="text-center mb-4"><i class="bi bi-people-fill text-violet"></i> Meet the Team</h2>
+<div class="row g-4 mb-5">
+    <div class="col-lg-3 col-md-6">
+        <div class="team-card">
+            <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&size=120&background=6f42c1&color=fff&bold=true" alt="Sarah Johnson">
+            <div class="team-name">Sarah Johnson</div>
+            <div class="team-role">CEO & Co‑founder</div>
+            <div class="social-links mt-2">
+                <a href="#"><i class="bi bi-linkedin"></i></a>
+                <a href="#"><i class="bi bi-twitter"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="team-card">
+            <img src="https://ui-avatars.com/api/?name=Michael+Chen&size=120&background=0d6efd&color=fff&bold=true" alt="Michael Chen">
+            <div class="team-name">Michael Chen</div>
+            <div class="team-role">CTO</div>
+            <div class="social-links mt-2">
+                <a href="#"><i class="bi bi-linkedin"></i></a>
+                <a href="#"><i class="bi bi-github"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="team-card">
+            <img src="https://ui-avatars.com/api/?name=Emily+Rodriguez&size=120&background=198754&color=fff&bold=true" alt="Emily Rodriguez">
+            <div class="team-name">Emily Rodriguez</div>
+            <div class="team-role">Head of Product</div>
+            <div class="social-links mt-2">
+                <a href="#"><i class="bi bi-linkedin"></i></a>
+                <a href="#"><i class="bi bi-twitter"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="team-card">
+            <img src="https://ui-avatars.com/api/?name=David+Kim&size=120&background=f59e0b&color=fff&bold=true" alt="David Kim">
+            <div class="team-name">David Kim</div>
+            <div class="team-role">Lead AI Engineer</div>
+            <div class="social-links mt-2">
+                <a href="#"><i class="bi bi-linkedin"></i></a>
+                <a href="#"><i class="bi bi-github"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TIMELINE ===== -->
+<h2 class="text-center mb-4"><i class="bi bi-clock-history text-violet"></i> Our Journey</h2>
+<div class="row g-4 mb-5">
+    <div class="col-md-8 mx-auto">
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="year">2024</div>
+                <div class="title">EventOps AI Founded</div>
+                <div class="desc">We started with a vision to revolutionise event management using AI agents.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="year">2025</div>
+                <div class="title">Alpha Launch</div>
+                <div class="desc">First version of the platform with Registration and Venue agents deployed.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="year">2026</div>
+                <div class="title">Full Platform Release</div>
+                <div class="desc">Complete suite of six AI agents, Intelligence Engine, and enterprise dashboards.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== CALL TO ACTION ===== -->
+<div class="text-center p-4 p-md-5 bg-light rounded-4 shadow-sm">
+    <h3 class="fw-bold">Join the future of event management</h3>
+    <p class="text-muted">Experience the power of autonomous AI agents.</p>
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg px-5">Go to Dashboard <i class="bi bi-arrow-right"></i></a>
+    {% else %}
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-5">Get Started Now <i class="bi bi-arrow-right"></i></a>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animated Counter
+    document.addEventListener('DOMContentLoaded', function() {
+        const counters = document.querySelectorAll('.stat-item[data-count]');
+        const speed = 200;
+
+        const animateCounter = (counter) => {
+            const target = parseInt(counter.getAttribute('data-count'));
+            const updateCounter = () => {
+                const current = parseInt(counter.innerText.replace(/,/g, ''));
+                const increment = Math.ceil(target / speed);
+                if (current < target) {
+                    counter.innerText = Math.min(current + increment, target);
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    counter.innerText = target.toLocaleString();
+                }
+            };
+            updateCounter();
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    if (counter.innerText === '0') {
+                        animateCounter(counter);
+                    }
+                    observer.unobserve(counter);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counters.forEach(counter => observer.observe(counter));
+    });
+</script>
+{% endblock %}
