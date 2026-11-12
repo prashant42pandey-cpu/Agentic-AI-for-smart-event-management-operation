@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Admin — Broadcast Notifications{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-wrapper {
+        background: linear-gradient(145deg, #f0f4ff 0%, #e6edf7 100%);
+        padding: 2rem 0;
+        border-radius: 2rem;
+    }
+
+    .admin-card {
+        border: none;
+        border-radius: 1.5rem;
+        box-shadow: 0 20px 60px rgba(13, 110, 253, 0.10);
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(6px);
+        overflow: hidden;
+    }
+
+    .admin-card .card-header {
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        color: white;
+        padding: 1.2rem 1.8rem;
+        border: none;
+    }
+
+    .stats-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 1rem;
+        padding: 1rem;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: white;
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-box {
+        flex: 1;
+        min-width: 240px;
+        border-radius: 50px;
+        border: 2px solid #e9ecef;
+        padding: 0.5rem 1.2rem;
+        background: white;
+        transition: all 0.2s;
+    }
+
+    .search-box:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        outline: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrapper">
+    <div class="container-fluid px-md-4">
+        <div class="card admin-card">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                    <h2 class="mb-0 fw-bold"><i class="bi bi-bell me-2"></i>Notification Center</h2>
+                    <small class="opacity-75">Broadcast announcements, automated reminders, and dispatch logs across channels</small>
+                </div>
+                <a href="{{ url_for('admin_notification_send') }}" class="btn btn-light rounded-pill px-4 fw-semibold shadow-sm text-primary">
+                    <i class="bi bi-send-fill me-1"></i> Send Notification
+                </a>
+            </div>
+
+            <div class="card-body p-4">
+                <!-- Stats Row -->
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <i class="bi bi-envelope-check-fill text-primary"></i>
+                        <span>Total Sent: <strong class="text-primary">{{ notifications|length }}</strong></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="bi bi-phone-fill text-info"></i>
+                        <span>SMS / Push: <strong class="text-info">{{ notifications|selectattr('channel', 'in', ['sms', 'push'])|list|length }}</strong></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="bi bi-envelope-at-fill text-success"></i>
+                        <span>Email: <strong class="text-success">{{ notifications|selectattr('channel', 'equalto', 'email')|list|length }}</strong></span>
+                    </div>
+                </div>
+
+                <!-- Search Filter -->
+                <div class="filter-bar">
+                    <input type="text" id="notifSearch" class="search-box" placeholder="🔍 Search notifications by recipient, channel, subject, or message...">
+                </div>
+
+                <!-- Notifications Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="notifTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Recipient</th>
+                                <th>Channel</th>
+                                <th>Subject</th>
+                                <th>Message Content</th>
+                                <th>Sent Timestamp</th>
+                                <th>Read Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for notif in notifications %}
+                            <tr>
+                                <td class="text-muted fw-semibold">{{ notif.id }}</td>
+                                <td>
+                                    <div class="fw-semibold text-dark">
+                                        <i class="bi bi-person-fill text-secondary me-1"></i>{{ notif.recipient }}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if notif.channel == 'email' %}
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill">
+                                        <i class="bi bi-envelope me-1"></i>Email
+                                    </span>
+                                    {% elif notif.channel == 'sms' %}
+                                    <span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-1 rounded-pill">
+                                        <i class="bi bi-chat-dots me-1"></i>SMS
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-purple-subtle text-purple border px-3 py-1 rounded-pill" style="background: #f3e8ff; color: #6f42c1;">
+                                        <i class="bi bi-phone me-1"></i>Push
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ notif.subject }}</div>
+                                </td>
+                                <td>
+                                    <span class="text-secondary small" style="max-width: 320px; display: inline-block;">
+                                        {{ notif.message }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar3 me-1"></i>{{ notif.sent_at.strftime('%Y-%m-%d %H:%M') if notif.sent_at else 'Recent' }}
+                                    </small>
+                                </td>
+                                <td>
+                                    {% if notif.read %}
+                                    <span class="badge bg-light text-muted border">
+                                        <i class="bi bi-check2-all text-primary me-1"></i>Read
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+                                        <i class="bi bi-clock me-1"></i>Delivered
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    <i class="bi bi-bell-slash fs-1 d-block mb-2 opacity-50"></i>
+                                    No notifications sent yet. Click "Send Notification" above to broadcast!
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('notifSearch').addEventListener('keyup', function () {
+        const query = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#notifTable tbody tr');
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}

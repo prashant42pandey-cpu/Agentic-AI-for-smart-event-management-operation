@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}Admin — Attendee Feedback & Ratings{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-wrapper {
+        background: linear-gradient(145deg, #f0f4ff 0%, #e6edf7 100%);
+        padding: 2rem 0;
+        border-radius: 2rem;
+    }
+
+    .admin-card {
+        border: none;
+        border-radius: 1.5rem;
+        box-shadow: 0 20px 60px rgba(13, 110, 253, 0.10);
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(6px);
+        overflow: hidden;
+    }
+
+    .admin-card .card-header {
+        background: linear-gradient(135deg, #ffc107, #fd7e14);
+        color: #212529;
+        padding: 1.2rem 1.8rem;
+        border: none;
+    }
+
+    .stats-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 1rem;
+        padding: 1rem;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: white;
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-box {
+        flex: 1;
+        min-width: 240px;
+        border-radius: 50px;
+        border: 2px solid #e9ecef;
+        padding: 0.5rem 1.2rem;
+        background: white;
+        transition: all 0.2s;
+    }
+
+    .search-box:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.2);
+        outline: none;
+    }
+
+    .star-rating {
+        color: #ffc107;
+        letter-spacing: 1px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrapper">
+    <div class="container-fluid px-md-4">
+        <div class="card admin-card">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                    <h2 class="mb-0 fw-bold"><i class="bi bi-star-fill text-warning me-2"></i>Attendee Feedback & Reviews</h2>
+                    <small class="text-dark opacity-75">Customer satisfaction ratings, attendee sentiment, and qualitative event feedback</small>
+                </div>
+                <span class="badge bg-dark text-white rounded-pill px-3 py-2 fs-6">
+                    <i class="bi bi-chat-heart me-1 text-warning"></i>Live Reviews
+                </span>
+            </div>
+
+            <div class="card-body p-4">
+                <!-- Stats Row -->
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <i class="bi bi-chat-square-quote-fill text-warning"></i>
+                        <span>Total Reviews: <strong class="text-warning">{{ feedbacks|length }}</strong></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <span>Average Rating: <strong class="text-dark">
+                            {% if feedbacks %}
+                                {{ "%.1f"|format((feedbacks|map(attribute='rating')|sum) / feedbacks|length) }} / 5.0
+                            {% else %}
+                                0.0 / 5.0
+                            {% endif %}
+                        </strong></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="bi bi-emoji-smile-fill text-success"></i>
+                        <span>Positive (4★+): <strong class="text-success">
+                            {{ feedbacks|selectattr('rating', 'ge', 4)|list|length }}
+                        </strong></span>
+                    </div>
+                </div>
+
+                <!-- Search Filter -->
+                <div class="filter-bar">
+                    <input type="text" id="feedbackSearch" class="search-box" placeholder="🔍 Search feedback by event, attendee, or comment keywords...">
+                </div>
+
+                <!-- Feedback Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="feedbackTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Attendee</th>
+                                <th>Event</th>
+                                <th>Rating</th>
+                                <th>Comment & Review</th>
+                                <th>Date</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fb in feedbacks %}
+                            <tr>
+                                <td class="text-muted fw-semibold">{{ fb.id }}</td>
+                                <td>
+                                    <div>
+                                        <div class="fw-bold text-dark">
+                                            <i class="bi bi-person-circle text-primary me-1"></i>{{ fb.user.name if fb.user else 'Anonymous' }}
+                                        </div>
+                                        <small class="text-muted">{{ fb.user.email if fb.user else 'N/A' }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-primary border fw-semibold px-3 py-1 rounded-pill">
+                                        <i class="bi bi-calendar-event me-1"></i>{{ fb.event.title if fb.event else 'General' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="star-rating">
+                                        {% for i in range(fb.rating) %}
+                                        <i class="bi bi-star-fill"></i>
+                                        {% endfor %}
+                                        {% for i in range(5 - fb.rating) %}
+                                        <i class="bi bi-star text-muted opacity-50"></i>
+                                        {% endfor %}
+                                        <span class="ms-1 fw-bold text-dark small">({{ fb.rating }}/5)</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-dark small fst-italic" style="max-width: 320px;">
+                                        "{{ fb.comment }}"
+                                    </div>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock me-1"></i>{{ fb.created_at.strftime('%Y-%m-%d') if fb.created_at else 'Recent' }}
+                                    </small>
+                                </td>
+                                <td class="text-end">
+                                    <a href="{{ url_for('admin_feedback_delete', feedback_id=fb.id) }}" class="btn btn-sm btn-outline-danger rounded-pill" onclick="return confirm('Delete this feedback entry?');" title="Delete Review">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    <i class="bi bi-star fs-1 text-warning d-block mb-2"></i>
+                                    No attendee feedback recorded yet.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('feedbackSearch').addEventListener('keyup', function () {
+        const query = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#feedbackTable tbody tr');
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}

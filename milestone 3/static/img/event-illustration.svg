@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d6efd" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#6f42c1" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#20c997"/>
+      <stop offset="100%" stop-color="#0dcaf0"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <!-- Background Glow -->
+  <circle cx="250" cy="175" r="140" fill="url(#grad1)" opacity="0.15" filter="blur(30px)"/>
+  
+  <!-- Calendar Stage / Platform -->
+  <rect x="110" y="80" width="280" height="200" rx="24" fill="#ffffff" filter="url(#shadow)"/>
+  <rect x="110" y="80" width="280" height="50" rx="20" fill="url(#grad1)"/>
+  
+  <!-- Calendar Header Details -->
+  <circle cx="150" cy="105" r="7" fill="#ffffff" opacity="0.9"/>
+  <circle cx="180" cy="105" r="7" fill="#ffffff" opacity="0.9"/>
+  <rect x="230" y="99" width="120" height="12" rx="6" fill="#ffffff" opacity="0.8"/>
+  
+  <!-- Grid Items (Events / Schedule) -->
+  <rect x="140" y="155" width="60" height="45" rx="10" fill="#e7f1ff"/>
+  <rect x="220" y="155" width="60" height="45" rx="10" fill="url(#grad2)" opacity="0.85"/>
+  <rect x="300" y="155" width="60" height="45" rx="10" fill="#f8f9fa"/>
+  
+  <rect x="140" y="215" width="60" height="45" rx="10" fill="#f8f9fa"/>
+  <rect x="220" y="215" width="60" height="45" rx="10" fill="#e7f1ff"/>
+  <rect x="300" y="215" width="60" height="45" rx="10" fill="url(#grad1)" opacity="0.85"/>
+  
+  <!-- AI Agent Floating Bot -->
+  <g transform="translate(330, 50)" filter="url(#shadow)">
+    <circle cx="45" cy="45" r="38" fill="url(#grad1)"/>
+    <circle cx="34" cy="42" r="6" fill="#ffffff"/>
+    <circle cx="56" cy="42" r="6" fill="#ffffff"/>
+    <path d="M 35 56 Q 45 64 55 56" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Antenna -->
+    <line x1="45" y1="7" x2="45" y2="0" stroke="#6f42c1" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="45" cy="-2" r="4" fill="#0dcaf0"/>
+  </g>
+</svg>
