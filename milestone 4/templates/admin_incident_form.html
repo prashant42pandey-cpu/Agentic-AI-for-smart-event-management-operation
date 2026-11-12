@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit' if incident else 'Report' }} Incident — Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-wrapper {
+        background: linear-gradient(145deg, #f0f4ff 0%, #e6edf7 100%);
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem 0;
+        border-radius: 2rem;
+    }
+
+    .form-card {
+        border: none;
+        border-radius: 2rem;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 20px 60px rgba(220, 53, 69, 0.12);
+        overflow: hidden;
+    }
+
+    .form-card .card-header {
+        background: linear-gradient(135deg, #dc3545, #7928ca);
+        color: white;
+        padding: 1.8rem 2rem;
+        text-align: center;
+        border: none;
+    }
+
+    .form-floating {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-floating > .form-control,
+    .form-floating > .form-select {
+        border-radius: 1rem;
+        border: 2px solid #e9ecef;
+        background: #f8f9fa;
+    }
+
+    .form-floating > .form-control:focus,
+    .form-floating > .form-select:focus {
+        border-color: #dc3545;
+        background: white;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.15);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-9">
+                <div class="card form-card">
+                    <div class="card-header">
+                        <i class="bi bi-exclamation-triangle fs-1 mb-2"></i>
+                        <h3 class="fw-bold mb-1">{{ 'Update Incident Status' if incident else 'Report Facility Incident' }}</h3>
+                        <p class="mb-0 opacity-75">Document technical or operational alerts for dispatch</p>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <form method="POST">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="title" name="title" placeholder="Incident Title" value="{{ incident.title if incident else '' }}" required>
+                                <label for="title"><i class="bi bi-card-heading me-2"></i>Incident Title / Short Summary</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" id="description" name="description" style="height: 120px" placeholder="Details" required>{{ incident.description if incident else '' }}</textarea>
+                                <label for="description"><i class="bi bi-body-text me-2"></i>Detailed Incident Description & Scope</label>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="priority" name="priority" required>
+                                            <option value="low" {% if incident and incident.priority == 'low' %}selected{% endif %}>Low (Minor issue)</option>
+                                            <option value="medium" {% if not incident or incident.priority == 'medium' %}selected{% endif %}>Medium (Attention required)</option>
+                                            <option value="high" {% if incident and incident.priority == 'high' %}selected{% endif %}>High (Critical blockage)</option>
+                                        </select>
+                                        <label for="priority"><i class="bi bi-lightning-charge me-2"></i>Priority Level</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="status" name="status">
+                                            <option value="open" {% if not incident or incident.status == 'open' %}selected{% endif %}>Open (Investigating)</option>
+                                            <option value="resolved" {% if incident and incident.status == 'resolved' %}selected{% endif %}>Resolved (Closed)</option>
+                                        </select>
+                                        <label for="status"><i class="bi bi-check2-circle me-2"></i>Resolution Status</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-danger btn-lg rounded-pill px-4 fw-semibold shadow-sm flex-grow-1">
+                                    <i class="bi bi-save me-1"></i> {{ 'Save Incident' if incident else 'Submit Alert' }}
+                                </button>
+                                <a href="{{ url_for('admin_incidents') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Register for {{ event.title }} — EventOps AI{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(145deg, #f0f4ff 0%, #e6edf7 100%);
+        padding: 2.5rem 0;
+        border-radius: 2rem;
+    }
+
+    .register-card {
+        border: none;
+        border-radius: 2rem;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 20px 60px rgba(13, 110, 253, 0.15);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .register-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .register-card .card-header {
+        background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+        color: white;
+        padding: 2rem 2.5rem;
+        text-align: center;
+        border: none;
+    }
+
+    .ticket-card {
+        border: 2px solid #dee2e6;
+        border-radius: 1.2rem;
+        padding: 1.2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        background: white;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .ticket-card:hover {
+        border-color: #0d6efd;
+        background: #f0f7ff;
+        transform: translateY(-3px);
+    }
+
+    .btn-check:checked + .ticket-card {
+        border-color: #0d6efd;
+        background: #e7f0ff;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    .event-meta-badge {
+        background: #f8f9fa;
+        padding: 0.6rem 1rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        border: 1px solid #e9ecef;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+                <div class="card register-card">
+                    <div class="card-header">
+                        <i class="bi bi-ticket-perforated fs-1 mb-2"></i>
+                        <h3 class="fw-bold mb-1">Confirm Registration</h3>
+                        <p class="mb-0 opacity-75">You are registering for <strong>{{ event.title }}</strong></p>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <!-- Event Details Recap -->
+                        <div class="p-3 bg-light rounded-4 mb-4">
+                            <h5 class="fw-bold text-primary mb-2">{{ event.title }}</h5>
+                            <p class="text-muted mb-3">{{ event.description }}</p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="event-meta-badge">
+                                    <i class="bi bi-calendar-event text-primary"></i> {{ event.date }}
+                                </span>
+                                <span class="event-meta-badge">
+                                    <i class="bi bi-clock text-info"></i> {{ event.time }}
+                                </span>
+                                <span class="event-meta-badge">
+                                    <i class="bi bi-geo-alt text-danger"></i> {{ event.location }}
+                                </span>
+                                <span class="event-meta-badge">
+                                    <i class="bi bi-people text-success"></i> Capacity: {{ event.capacity }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Registration Form -->
+                        <form method="POST" action="{{ url_for('register_for_event', event_id=event.id) }}">
+                            <label class="form-label fw-bold mb-3">Choose Your Ticket Pass Tier</label>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6 col-12">
+                                    <input type="radio" class="btn-check" name="ticket_type" id="ticketStandard" value="Standard" checked>
+                                    <label class="ticket-card" for="ticketStandard">
+                                        <div>
+                                            <i class="bi bi-ticket text-primary fs-2 mb-2"></i>
+                                            <h6 class="fw-bold mb-1">Standard Pass</h6>
+                                            <small class="text-muted">Full keynote & expo hall access</small>
+                                        </div>
+                                        <div class="mt-2 fw-bold text-success">FREE / INCLUDED</div>
+                                    </label>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <input type="radio" class="btn-check" name="ticket_type" id="ticketVIP" value="VIP">
+                                    <label class="ticket-card" for="ticketVIP">
+                                        <div>
+                                            <i class="bi bi-star-fill text-warning fs-2 mb-2"></i>
+                                            <h6 class="fw-bold mb-1">VIP All-Access</h6>
+                                            <small class="text-muted">Reserved front seating & VIP lounge</small>
+                                        </div>
+                                        <div class="mt-2 fw-bold text-primary">PREMIUM</div>
+                                    </label>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <input type="radio" class="btn-check" name="ticket_type" id="ticketSpeaker" value="Speaker">
+                                    <label class="ticket-card" for="ticketSpeaker">
+                                        <div>
+                                            <i class="bi bi-mic-fill text-purple fs-2 mb-2" style="color: #6f42c1;"></i>
+                                            <h6 class="fw-bold mb-1">Speaker Pass</h6>
+                                            <small class="text-muted">For presenters and panelists</small>
+                                        </div>
+                                        <div class="mt-2 fw-bold text-secondary">SPEAKER ACCESS</div>
+                                    </label>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <input type="radio" class="btn-check" name="ticket_type" id="ticketPress" value="Press">
+                                    <label class="ticket-card" for="ticketPress">
+                                        <div>
+                                            <i class="bi bi-camera-reels-fill text-info fs-2 mb-2"></i>
+                                            <h6 class="fw-bold mb-1">Press / Media</h6>
+                                            <small class="text-muted">Media room & interview accreditation</small>
+                                        </div>
+                                        <div class="mt-2 fw-bold text-info">MEDIA BADGE</div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-semibold py-3 shadow-sm">
+                                    <i class="bi bi-check2-circle me-2"></i> Complete Registration Now
+                                </button>
+                                <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn btn-outline-secondary rounded-pill py-2">
+                                    <i class="bi bi-arrow-left"></i> Cancel & Back to Details
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

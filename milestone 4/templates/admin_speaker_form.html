@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit' if speaker else 'Add' }} Speaker — Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-wrapper {
+        background: linear-gradient(145deg, #f0f4ff 0%, #e6edf7 100%);
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem 0;
+        border-radius: 2rem;
+    }
+
+    .form-card {
+        border: none;
+        border-radius: 2rem;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 20px 60px rgba(13, 110, 253, 0.12);
+        overflow: hidden;
+    }
+
+    .form-card .card-header {
+        background: linear-gradient(135deg, #0d6efd, #6610f2);
+        color: white;
+        padding: 1.8rem 2rem;
+        text-align: center;
+        border: none;
+    }
+
+    .form-floating {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-floating > .form-control,
+    .form-floating > .form-select {
+        border-radius: 1rem;
+        border: 2px solid #e9ecef;
+        background: #f8f9fa;
+    }
+
+    .form-floating > .form-control:focus,
+    .form-floating > .form-select:focus {
+        border-color: #0d6efd;
+        background: white;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-9">
+                <div class="card form-card">
+                    <div class="card-header">
+                        <i class="bi bi-mic fs-1 mb-2"></i>
+                        <h3 class="fw-bold mb-1">{{ 'Edit Speaker Details' if speaker else 'Add New Speaker' }}</h3>
+                        <p class="mb-0 opacity-75">Provide speaker bio, session schedule, and availability</p>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <form method="POST">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Dr. John Smith" value="{{ speaker.name if speaker else '' }}" required>
+                                <label for="name"><i class="bi bi-person me-2"></i>Speaker Full Name</label>
+                            </div>
+
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="session_title" name="session_title" placeholder="Keynote Title" value="{{ speaker.session_title if speaker else '' }}" required>
+                                <label for="session_title"><i class="bi bi-easel me-2"></i>Session or Keynote Title</label>
+                            </div>
+
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="schedule" name="schedule" placeholder="Day 1 10:00 AM" value="{{ speaker.schedule if speaker else '' }}">
+                                <label for="schedule"><i class="bi bi-calendar-event me-2"></i>Schedule (e.g. Day 1 10:00 AM)</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" id="bio" name="bio" style="height: 120px" placeholder="Bio">{{ speaker.bio if speaker else '' }}</textarea>
+                                <label for="bio"><i class="bi bi-card-text me-2"></i>Professional Biography</label>
+                            </div>
+
+                            <div class="form-check form-switch p-3 bg-light rounded-3 mb-4 ps-5">
+                                <input class="form-check-input ms-n5" type="checkbox" id="availability" name="availability" value="1" {% if not speaker or speaker.availability %}checked{% endif %}>
+                                <label class="form-check-label fw-semibold" for="availability">
+                                    <i class="bi bi-check-circle text-success me-1"></i> Speaker is Confirmed & Available
+                                </label>
+                                <div class="text-muted small">Toggle off if speaker is tentative or withdrew</div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill px-4 fw-semibold shadow-sm flex-grow-1">
+                                    <i class="bi bi-save me-1"></i> {{ 'Save Changes' if speaker else 'Create Speaker' }}
+                                </button>
+                                <a href="{{ url_for('admin_speakers') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

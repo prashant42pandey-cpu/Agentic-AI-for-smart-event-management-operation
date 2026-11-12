@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350" width="100%" height="100%">
+  <defs>
+    <linearGradient id="teamGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#6f42c1"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0dcaf0"/>
+      <stop offset="100%" stop-color="#0d6efd"/>
+    </linearGradient>
+    <filter id="teamShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <!-- Background Glow -->
+  <circle cx="250" cy="180" r="130" fill="url(#teamGrad)" opacity="0.12" filter="blur(25px)"/>
+
+  <!-- Network Nodes / Connections -->
+  <line x1="160" y1="180" x2="250" y2="130" stroke="#8b5cf6" stroke-width="3" stroke-dasharray="6,6" opacity="0.5"/>
+  <line x1="250" y1="130" x2="340" y2="180" stroke="#8b5cf6" stroke-width="3" stroke-dasharray="6,6" opacity="0.5"/>
+  <line x1="160" y1="180" x2="340" y2="180" stroke="#0dcaf0" stroke-width="2" opacity="0.4"/>
+
+  <!-- Center Leader / Agent -->
+  <g transform="translate(205, 80)" filter="url(#teamShadow)">
+    <rect x="0" y="0" width="90" height="110" rx="20" fill="#ffffff"/>
+    <circle cx="45" cy="40" r="24" fill="url(#teamGrad)"/>
+    <path d="M 20 95 Q 45 68 70 95" fill="url(#teamGrad)" opacity="0.85"/>
+    <circle cx="70" cy="22" r="10" fill="#20c997" stroke="#ffffff" stroke-width="2"/>
+  </g>
+
+  <!-- Left Member -->
+  <g transform="translate(120, 140)" filter="url(#teamShadow)">
+    <rect x="0" y="0" width="80" height="95" rx="18" fill="#ffffff"/>
+    <circle cx="40" cy="35" r="20" fill="url(#accentGrad)"/>
+    <path d="M 18 85 Q 40 60 62 85" fill="url(#accentGrad)" opacity="0.85"/>
+  </g>
+
+  <!-- Right Member -->
+  <g transform="translate(300, 140)" filter="url(#teamShadow)">
+    <rect x="0" y="0" width="80" height="95" rx="18" fill="#ffffff"/>
+    <circle cx="40" cy="35" r="20" fill="url(#teamGrad)"/>
+    <path d="M 18 85 Q 40 60 62 85" fill="url(#teamGrad)" opacity="0.85"/>
+  </g>
+</svg>
